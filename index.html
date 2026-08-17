@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XIF4T Follower Bot</title>
+    <title>XIF4T Follow Bot</title>
     <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
@@ -24,7 +24,7 @@
             padding: 15px;
         }
 
-        /* Header Style */
+        /* Header Area */
         .header {
             width: 100%;
             display: flex;
@@ -75,7 +75,7 @@
             border: 1px solid #ff4757;
         }
 
-        /* Form Card */
+        /* Input Form Card */
         .card {
             width: 100%;
             background: #141a26;
@@ -112,7 +112,7 @@
             border-color: #00f2fe;
         }
 
-        /* Neon Action Button */
+        /* Action Button */
         .submit-btn {
             width: 100%;
             padding: 15px;
@@ -134,27 +134,31 @@
             cursor: not-allowed;
         }
 
-        /* Status & Result Message */
+        /* Result Messages */
         .status-msg {
             margin-top: 15px;
             text-align: center;
             font-size: 14px;
             font-weight: bold;
+            line-height: 1.5;
         }
 
-        .loading {
-            color: #f1c40f;
+        .loading { color: #f1c40f; }
+        .success { color: #2ecc71; }
+        .error { color: #e74c3c; }
+
+        .join-btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 16px;
+            background: #0088cc;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 13px;
         }
 
-        .success {
-            color: #2ecc71;
-        }
-
-        .error {
-            color: #e74c3c;
-        }
-
-        /* Adsterra Ad Container */
+        /* Adsterra Ad Unit Area */
         .ad-container {
             margin-top: 25px;
             width: 100%;
@@ -183,7 +187,7 @@
         <button class="tab-btn">⚙️ HISTORY</button>
     </div>
 
-    <!-- Main Input Form Card -->
+    <!-- Form Card -->
     <div class="card">
         <div class="card-title">Boost Live Follow</div>
         
@@ -206,18 +210,18 @@
 
     <!-- Adsterra Ad Unit Area -->
     <div class="ad-container">
-        <!-- 🔴 আপনার Adsterra বিজ্ঞাপনের Script Tag টি নিচে বসিয়ে দিন -->
+        <!-- 🔴 আপনার Adsterra Script Tag নিচে বসিয়ে দিন -->
         <script type="text/javascript">
-            // Adsterra Code Here...
+            // Adsterra Ad Script Code Here...
         </script>
     </div>
 
     <script>
-        // Initialize Telegram WebApp
+        // Telegram WebApp Initialize
         const tg = window.Telegram.WebApp;
-        tg.expand(); // Full screen inside Telegram
+        tg.expand(); // App full screen
 
-        // YOUR BACKEND SERVER URL (Python Flask API Endpoint)
+        // Render Backend API Endpoint
         const BACKEND_URL = "https://xif4t-follow-bot.onrender.com/send-follow";
 
         async function processFollow() {
@@ -233,13 +237,16 @@
                 return;
             }
 
-            // Start Loading State
+            // Get Telegram User ID
+            const telegramUserId = tg.initDataUnsafe?.user?.id;
+
+            // Start Loading
             sendBtn.disabled = true;
             statusOutput.className = "status-msg loading";
             statusOutput.innerHTML = "Please wait ⏳ Processing Follows...";
 
             try {
-                // Send API request to Python Backend
+                // Request to Flask Backend
                 const response = await fetch(BACKEND_URL, {
                     method: "POST",
                     headers: {
@@ -247,7 +254,8 @@
                     },
                     body: JSON.stringify({
                         uid: uidInput,
-                        region: regionInput
+                        region: regionInput,
+                        user_id: telegramUserId
                     })
                 });
 
@@ -256,14 +264,21 @@
                 if (response.ok && data.success) {
                     statusOutput.className = "status-msg success";
                     statusOutput.innerHTML = `✅ ${data.sent_count} Follows Sent Successfully!`;
-                } else {
+                } 
+                else if (response.status === 403 && data.must_join) {
+                    // Must Join Channel Warning Message
+                    statusOutput.className = "status-msg error";
+                    statusOutput.innerHTML = `⚠️ You must join our channel first!<br>
+                    <a href="${data.channel_link}" target="_blank" class="join-btn">👉 Join Channel Now</a>`;
+                } 
+                else {
                     statusOutput.className = "status-msg error";
                     statusOutput.innerHTML = `❌ Error: ${data.message || 'Failed to send follows!'}`;
                 }
 
             } catch (err) {
                 statusOutput.className = "status-msg error";
-                statusOutput.innerHTML = "❌ Connection Error! Check your server.";
+                statusOutput.innerHTML = "❌ Connection Error! Check your backend server.";
             } finally {
                 sendBtn.disabled = false;
             }
