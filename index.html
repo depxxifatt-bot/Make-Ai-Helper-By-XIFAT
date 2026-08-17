@@ -24,7 +24,7 @@
             padding: 15px;
         }
 
-        /* Header Area */
+        /* Header Area with Logo */
         .header {
             width: 100%;
             display: flex;
@@ -34,8 +34,22 @@
             padding: 10px 5px;
         }
 
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .top-logo {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 2px solid #00f2fe;
+            object-fit: cover;
+        }
+
         .title {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
             color: #4a90e2;
         }
@@ -86,7 +100,7 @@
             display: block;
         }
 
-        /* Input Form Card & Developer Card */
+        /* Card Container */
         .card {
             width: 100%;
             background: #141a26;
@@ -123,7 +137,7 @@
             border-color: #00f2fe;
         }
 
-        /* Action Button */
+        /* Submit Button */
         .submit-btn {
             width: 100%;
             padding: 15px;
@@ -145,16 +159,17 @@
             cursor: not-allowed;
         }
 
-        /* Developer Card Styling */
+        /* Developer Section Styling */
         .dev-info {
             text-align: center;
         }
 
         .dev-avatar {
-            width: 80px;
-            height: 80px;
+            width: 75px;
+            height: 75px;
             border-radius: 50%;
             border: 2px solid #00f2fe;
+            object-fit: cover;
             margin-bottom: 10px;
         }
 
@@ -166,28 +181,42 @@
         }
 
         .dev-bio {
-            font-size: 13px;
+            font-size: 12px;
             color: #8a99ad;
             margin-bottom: 15px;
             line-height: 1.4;
         }
 
+        .dev-links-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+        }
+
         .dev-link {
-            display: block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
             width: 100%;
             padding: 12px;
-            margin-top: 10px;
             background: #1f2a3e;
             color: #fff;
             text-decoration: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-weight: bold;
             font-size: 14px;
             transition: 0.3s;
             border: 1px solid #2c3e50;
         }
 
-        .dev-link:hover {
+        .dev-link.yt:hover {
+            background: #ff0000;
+            border-color: #ff0000;
+        }
+
+        .dev-link.tg:hover {
             background: #0088cc;
             border-color: #0088cc;
         }
@@ -216,7 +245,7 @@
             font-size: 13px;
         }
 
-        /* Adsterra Ad Unit Area */
+        /* Adsterra Container */
         .ad-container {
             margin-top: 25px;
             width: 100%;
@@ -233,9 +262,12 @@
 </head>
 <body>
 
-    <!-- Header Area -->
+    <!-- Header Area with Top Logo -->
     <div class="header">
-        <div class="title">XIF4T Follow Bot</div>
+        <div class="header-left">
+            <img src="https://i.ibb.co.com/XxzbPWS7/quality-restoration-20260807124410172.jpg" alt="Logo" class="top-logo">
+            <div class="title">XIF4T Follow Bot</div>
+        </div>
         <div class="status-badge">● ONLINE</div>
     </div>
 
@@ -271,19 +303,24 @@
     <!-- TAB 2: DEVELOPER SECTION -->
     <div id="developer-tab" class="tab-content">
         <div class="card dev-info">
+            <img src="https://i.ibb.co.com/XxzbPWS7/quality-restoration-20260807124410172.jpg" alt="Developer Logo" class="dev-avatar">
             <div class="dev-name">XIF4T OFFICIAL</div>
             <div class="dev-bio">Bot & Web App Developer.<br>Specialized in Free Fire Automation & API tools.</div>
-
             
-            <a href="https://youtube.com/@xif4t?si=ixmR-dQKQqsT2tjn" target="_blank" class="dev-link">▶️YouTube🔴</a
-            <a href="https://t.me/XIF4Tofficial" target="_blank" class="dev-link">📢 Telegram Channel</a>
-           
+            <div class="dev-links-container">
+                <a href="https://youtube.com/@xif4t?si=NOGpN3LHq9TwYbEu" target="_blank" class="dev-link yt">
+                    ▶️ YouTube Channel
+                </a>
+                <a href="https://t.me/XIF4Tofficial" target="_blank" class="dev-link tg">
+                    📢 Telegram Channel
+                </a>
+            </div>
         </div>
     </div>
 
     <!-- Adsterra Ad Unit Area -->
     <div class="ad-container">
-        <!-- 🔴 আপনার Adsterra Script Tag নিচে বসিয়ে দিন -->
+        <!-- 🔴 আপনার Adsterra Script Tag এখানে বসান -->
         <script type="text/javascript">
             // Adsterra Ad Script Code Here...
         </script>
