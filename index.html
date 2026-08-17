@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FF Follower Bot</title>
+    <!-- Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0b0e14;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        /* Header Style */
+        .header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 10px 5px;
+        }
+
+        .title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #4a90e2;
+        }
+
+        .status-badge {
+            font-size: 11px;
+            color: #00ff88;
+            background: rgba(0, 255, 136, 0.1);
+            padding: 4px 8px;
+            border-radius: 12px;
+        }
+
+        /* Nav Tabs */
+        .tabs {
+            display: flex;
+            width: 100%;
+            background: #141923;
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            color: #8a99ad;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .tab-btn.active {
+            background: #1e2638;
+            color: #ff4757;
+            border: 1px solid #ff4757;
+        }
+
+        /* Form Card */
+        .card {
+            width: 100%;
+            background: #141a26;
+            border: 1px solid #202b3d;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+        }
+
+        .card-title {
+            font-size: 13px;
+            color: #ff7675;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-box, .select-box {
+            width: 100%;
+            padding: 14px;
+            background: #0b0f17;
+            border: 1px solid #1f2a3e;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .input-box:focus, .select-box:focus {
+            border-color: #00f2fe;
+        }
+
+        /* Neon Action Button */
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #00f2fe 0%, #4facfe 100%);
+            color: #000;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
+            transition: 0.3s;
+        }
+
+        .submit-btn:disabled {
+            background: #2a3547;
+            color: #6c7a89;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        /* Status & Result Message */
+        .status-msg {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .loading {
+            color: #f1c40f;
+        }
+
+        .success {
+            color: #2ecc71;
+        }
+
+        .error {
+            color: #e74c3c;
+        }
+
+        /* Adsterra Ad Container */
+        .ad-container {
+            margin-top: 25px;
+            width: 100%;
+            min-height: 80px;
+            background: #141923;
+            border: 1px dashed #202b3d;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Area -->
+    <div class="header">
+        <div class="title">Xerox Follow Bot</div>
+        <div class="status-badge">● ONLINE</div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="tabs">
+        <button class="tab-btn active">🔥 FOLLOWS</button>
+        <button class="tab-btn">⚙️ HISTORY</button>
+    </div>
+
+    <!-- Main Input Form Card -->
+    <div class="card">
+        <div class="card-title">Boost Live Follow</div>
+        
+        <div class="input-group">
+            <input type="number" id="playerUid" class="input-box" placeholder="Enter Player UID..." required>
+        </div>
+
+        <div class="input-group">
+            <select id="regionSelect" class="select-box">
+                <option value="BD">🇧🇩 BANGLADESH</option>
+                <option value="IND">🇮🇳 INDIA</option>
+            </select>
+        </div>
+
+        <button id="sendBtn" class="submit-btn" onclick="processFollow()">Send Follows</button>
+
+        <!-- Dynamic Output Message Area -->
+        <div id="statusOutput" class="status-msg"></div>
+    </div>
+
+    <!-- Adsterra Ad Unit Area -->
+    <div class="ad-container">
+        <!-- 🔴 আপনার Adsterra বিজ্ঞাপনের Script Tag টি নিচে বসিয়ে দিন -->
+        <script type="text/javascript">
+            // Adsterra Code Here...
+        </script>
+    </div>
+
+    <script>
+        // Initialize Telegram WebApp
+        const tg = window.Telegram.WebApp;
+        tg.expand(); // Full screen inside Telegram
+
+        // YOUR BACKEND SERVER URL (Python Flask API Endpoint)
+        const BACKEND_URL = "https://your-flask-api-domain.com/send-follow";
+
+        async function processFollow() {
+            const uidInput = document.getElementById("playerUid").value.trim();
+            const regionInput = document.getElementById("regionSelect").value;
+            const sendBtn = document.getElementById("sendBtn");
+            const statusOutput = document.getElementById("statusOutput");
+
+            // UID Validation
+            if (!uidInput || uidInput.length < 8) {
+                statusOutput.className = "status-msg error";
+                statusOutput.innerHTML = "❌ Please enter a valid Player UID!";
+                return;
+            }
+
+            // Start Loading State
+            sendBtn.disabled = true;
+            statusOutput.className = "status-msg loading";
+            statusOutput.innerHTML = "Please wait ⏳ Processing Follows...";
+
+            try {
+                // Send API request to Python Backend
+                const response = await fetch(BACKEND_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        uid: uidInput,
+                        region: regionInput
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    statusOutput.className = "status-msg success";
+                    statusOutput.innerHTML = `✅ ${data.sent_count} Follows Sent Successfully!`;
+                } else {
+                    statusOutput.className = "status-msg error";
+                    statusOutput.innerHTML = `❌ Error: ${data.message || 'Failed to send follows!'}`;
+                }
+
+            } catch (err) {
+                statusOutput.className = "status-msg error";
+                statusOutput.innerHTML = "❌ Connection Error! Check your server.";
+            } finally {
+                sendBtn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
