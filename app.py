@@ -11,6 +11,12 @@ import follow_pb2
 app = Flask(__name__)
 CORS(app)  # Telegram Mini App থেকে Cross-Origin রিকোয়েস্ট অনুমতির জন্য
 
+# app.py ফাইলের ভেতরে এই অংশটি যোগ করুন
+@app.route("/", methods=["GET"])
+def home():
+    return jsonify({"status": "online", "message": "Xerox Follow Bot Server is Running!"}), 200
+
+
 # Access Token ফাইল পড়ার হেল্পার ফাংশন
 def load_access_tokens(file_path):
     if not os.path.exists(file_path):
