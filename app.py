@@ -2,6 +2,9 @@ import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
+# Render Environment Variable থেকে টোকেন পড়ার অংশ
+BOT_TOKEN = os.environ.get("BOT_TOKEN")
+
 # আপনার আগের জেনারেট করা প্রোটোবাফ মডিউলটি ইমপোর্ট করুন
 import follow_pb2
 
